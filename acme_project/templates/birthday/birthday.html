@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-{% endblock %}
+  {% if form.is_valid %}
+    {% with data=form.cleaned_data  %}
+      <h3>Здравствуйте {{ data.first_name }} {{ data.last_name }}!</h3>
+      {% if birthday_countdown == 0 %}
+        <h2>С днем рождения!!! &#x1F389&#x1F382</h2>
+      {% elif birthday_countdown > 0 %}
+        <h2>Дней до дня рождения: {{ birthday_countdown }}! &#x1F609</h2>
+      {% endif %}
+    {% endwith %}
+  {% elif not form.cleaned_data %}
+    <h3>Заполните все необходимые поля формы.</h3>
+  {% elif not form.is_valid %}
+    <h3>Заполните корректно все поля формы.</h3>
+  {% endif %}
+  <hr>
+  <form action="{% url "birthday:create" %}" method="get">
+    <table cellspacing="0" cellpadding="5">
+      {{ form }}
+      <tr>
+        <th align="left">
+          <input type="reset" value="Очистить &#x274C;">
+        </th>
+        <td align="left">
+          <input type="submit" value="Отправить &#x2714">
+        </td>
+      </tr>
+    </table>
+  </form>
+{% endblock content %}
