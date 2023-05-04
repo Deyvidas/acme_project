@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'birthday.apps.BirthdayConfig',
     'pages.apps.PagesConfig',
     'debug_toolbar.apps.DebugToolbarConfig',
+    'django_bootstrap5',
 ]
 
 MIDDLEWARE = [

@@ -1,32 +1,70 @@
 {% extends "base.html" %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-  {% if form.is_valid %}
-    {% with data=form.cleaned_data  %}
-      <h3>Здравствуйте {{ data.first_name }} {{ data.last_name }}!</h3>
-      {% if birthday_countdown == 0 %}
-        <h2>С днем рождения!!! &#x1F389&#x1F382</h2>
-      {% elif birthday_countdown > 0 %}
-        <h2>Дней до дня рождения: {{ birthday_countdown }}! &#x1F609</h2>
+
+  <div class="card col-4">
+    <div class="card-body">
+      {% if form.is_valid %}
+        {% with data=form.cleaned_data  %}
+          Здравствуйте {{ data.first_name }} {{ data.last_name }}!<br>
+          {% if birthday_countdown == 0 %}
+            С днем рождения!!! &#x1F389&#x1F382
+          {% elif birthday_countdown > 0 %}
+            Дней до дня рождения: {{ birthday_countdown }}! &#x1F609
+          {% endif %}
+        {% endwith %}
+      {% elif not form.cleaned_data %}
+        Заполните все необходимые поля формы.
+      {% elif not form.is_valid %}
+        Заполните корректно все поля формы.
       {% endif %}
-    {% endwith %}
-  {% elif not form.cleaned_data %}
-    <h3>Заполните все необходимые поля формы.</h3>
-  {% elif not form.is_valid %}
-    <h3>Заполните корректно все поля формы.</h3>
-  {% endif %}
-  <hr>
-  <form action="{% url "birthday:create" %}" method="get">
-    <table cellspacing="0" cellpadding="5">
-      {{ form }}
-      <tr>
-        <th align="left">
-          <input type="reset" value="Очистить &#x274C;">
-        </th>
-        <td align="left">
-          <input type="submit" value="Отправить &#x2714">
-        </td>
-      </tr>
-    </table>
-  </form>
+    </div>
+  </div>
+  <br>
+
+  <div class="card col-4">
+    <p class="card-header"><b>Калькулятор дней до дня рождения.</b></p>
+    <form action="">
+      <div class="card-body">
+        {% bootstrap_form form %}
+        <table cellpadding="10" width="100%" style="margin-bottom: 0px; margin-top: 16px">
+          <tr>
+            <td align="right">
+              <input size="200px" class="btn btn-outline-warning" type="reset" value="Очистить &#x274C;">
+            </td>
+            <td align="left">
+              <input class="btn btn-outline-success" type="submit" value="Отправить &#x2714;">
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
+  </div>
+
+  {% comment %} <div class="card col-4">
+    <p class="card-header"><b>Калькулятор дней до дня рождения.</b></p>
+    <form action="">
+      <div class="card-body">
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+            {{ field }}
+            {{ field.help_text }}
+          </div>
+        {% endfor %}
+        <table cellpadding="10" width="100%" style="margin-bottom: 0px; margin-top: 16px">
+          <tr>
+            <td align="right">
+              <input size="200px" class="btn btn-outline-warning" type="reset" value="Очистить &#x274C;">
+            </td>
+            <td align="left">
+              <input class="btn btn-outline-success" type="submit" value="Отправить &#x2714;">
+            </td>
+          </tr>
+        </table>
+      </div>
+    </form>
+  </div> {% endcomment %}
+
 {% endblock content %}
