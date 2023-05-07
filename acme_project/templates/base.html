@@ -4,13 +4,13 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8">
-    <title>Проект ACME</title>
+    <title>{% block title %}{% endblock title %}</title>
     {% bootstrap_css %}
   </head>
   <body>
     {% include "includes/header.html" %}
     <div class="container pt-5">
-      {% block content %}{% endblock %}
+      {% block content %}{% endblock content %}
     </div>
   </body>
 </html>

@@ -3,19 +3,19 @@ from django.db import models
 
 class Birthday(models.Model):
     first_name = models.CharField(
-        verbose_name='Ваше имя:',
+        verbose_name='Имя',
         max_length=20,
     )
 
     last_name = models.CharField(
-        verbose_name='Ваша фамилия:',
+        verbose_name='Фамилия',
         help_text='Необязательное поле',
         blank=True,
         max_length=20,
     )
 
     birthday = models.DateField(
-        verbose_name='Дата рождения:',
+        verbose_name='Дата рождения',
     )
 
     class Meta:
