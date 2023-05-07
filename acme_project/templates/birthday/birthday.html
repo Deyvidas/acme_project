@@ -7,265 +7,77 @@
 
 {% block content %}
 
-  {% if "/create/" in request.path %}
+  {% with data=form.instance %}
+
+    <!-- Раздел в котором определяется каким будет заголовок формы -->
     <div class="card col-4">
       <p class="card-header text-center">
-        <b>Создание новой записи.</b>
+        {% if "/create/" in request.path %}
+          <b>Создание новой записи.</b>
+        {% elif "/delete/" in request.path %}
+          <b>Удаление записи № {{ data.id }}.</b>
+        {% elif "/preview/" in request.path %}
+          <b>Просмотр записи № {{ data.id }}.</b>
+        {% elif "/edit/" in request.path %}
+          <b>Редактирование записи № {{ data.id }}.</b>
+        {% endif %}
       </p>
+
+      <!-- Раздел формы -->
       <div class="card-body">
-        <form action="{% url 'birthday:create' %}" method="post">
+        <form action="#" method="post">
           {% csrf_token %}
-          {% bootstrap_form form %}
-          <table cellpadding="5" width="100%">
-            <tbody>
-              <!-- кнопка для очистки -->
-              <tr>
-                <td>
-                  <div class="d-grid gap-2 col-12 mx-auto">
-                    <input class="btn btn-outline-warning" type="reset" value="Очистить &#x274C;">
-                  </div>
-                </td>
-              </tr>
-              <!-- кнопка для сохранения -->
-              <tr>
-                <td>
-                  <div class="d-grid gap-2 col-12 mx-auto">
-                    <input class="btn btn-outline-success" type="submit" value="Сохранить &#x2714;">
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+
+          <!-- Раздел в котором определяется как будут рендерится поля -->
+          {% if inactive_attrs %}
+            {% for field_name, attr in inactive_attrs.items %}
+              <div class="mb-3">
+                <label class="form-label" for="{{ attr.input_id }}">{{ attr.label }}</label>
+                <input class="form-control" value="{{ attr.str_value }}" type="{{ attr.type }}" disabled name="{{ field_name }}" placeholder="{{ attr.label }}" id="{{ attr.input_id }}">
+                <div id="{{ field_name }}Help" class="form-text">{{ attr.help_text }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            {% bootstrap_form form %}
+          {% endif %}
+
+          <!-- Раздел в котором определяется какие кнопки будут рендерится -->
+          <a class="btn col-12 btn-outline-primary" href="{% url 'birthday:list' %}" role="button">Вернутся к списку &#x1F519;</a>
+          <p></p>
+          {% if "/create/" in request.path %}
+            <input class="btn col-12 btn-outline-warning" type="reset" value="Очистить &#x274C;">
+            <p></p>
+            <input class="btn col-12 btn-outline-success" type="submit" value="Сохранить &#x2714;">
+          {% elif "/delete/" in request.path %}
+            <input class="btn col-12 btn-outline-danger" type="submit" value="Удалить &#x1F5D1;">
+          {% elif "/edit/" in request.path %}
+            <input class="btn col-12 btn-outline-warning" type="reset" value="Вернуть изходные значения &#x1F504;">
+            <p></p>
+            <input class="btn col-12 btn-outline-success" type="submit" value="Изменить &#x2714;">
+          {% endif %}
+
         </form>
       </div>
     </div>
+    <p></p>
 
-  {% elif "/delete/" in request.path %}
-    {% with object=form.initial %}
-      <div class="card col-4">
-        <p class="card-header text-center">
-          <b>Удаление записи № {{ object.id }}.</b>
-        </p>
-        <div class="card-body">
-          <form action="{% url 'birthday:delete' object.id %}" method="post">
-            {% csrf_token %}
-            {% for field_name, attr in label_value.items %}
-              <div class="mb-3">
-                <label class="form-label" for="{{ attr.input_id }}">{{ attr.label }}</label>
-                <input class="form-control" value="{{ attr.str_value }}" type="{{ attr.type }}" disabled name="{{ field_name }}" placeholder="{{ attr.label }}" id="{{ attr.input_id }}">
-                <div id="{{ field_name }}Help" class="form-text">{{ attr.help_text }}</div>
-              </div>
-            {% endfor %}
-            <table cellpadding="5" width="100%">
-              <tbody>
-                <!-- кнопка для удаления -->
-                <tr>
-                  <td>
-                    <div class="d-grid gap-2 col-12 mx-auto">
-                      <input class="btn btn-outline-danger" type="submit" value="Удалить &#x1F5D1;">
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </form>
-        </div>
-      </div>
-    {% endwith %}
-
-  {% elif "/preview/" in request.path %}
-    {% with object=form.initial %}
-      <div class="card col-4">
-        <p class="card-header text-center">
-          <b>Просмотр записи № {{ object.id }}.</b>
-        </p>
-        <div class="card-body">
-          <form action="{% url 'birthday:list' %}" method="post">
-            {% csrf_token %}
-            {% for field_name, attr in label_value.items %}
-              <div class="mb-3">
-                <label class="form-label" for="{{ attr.input_id }}">{{ attr.label }}</label>
-                <input class="form-control" value="{{ attr.str_value }}" type="{{ attr.type }}" disabled name="{{ field_name }}" placeholder="{{ attr.label }}" id="{{ attr.input_id }}">
-                <div id="{{ field_name }}Help" class="form-text">{{ attr.help_text }}</div>
-              </div>
-            {% endfor %}
-            <table cellpadding="5" width="100%">
-              <tbody>
-                <!-- кнопка для возврата к списку -->
-                <tr>
-                  <td>
-                    <div class="d-grid gap-2 col-12 mx-auto">
-                      <input class="btn btn-outline-success" type="submit" value="К списку &#x1F519;">
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </form>
-        </div>
-      </div>
-    {% endwith %}
-    <br>
     <!-- Окошко с количесвтом дней до дня рождения. -->
-    <div class="card col-4">
-      <div class="card-body text-center">
-        {% if days_to_brt == 0 %}
-          <h5>&#x1F382;&#x1F389; С днем рождения!!! &#x1F389;&#x1F382;</h5>
-        {% elif days_to_brt > 0 %}
-          <h5>Дней до дня рождения: {{ days_to_brt }}! &#x1F609;</h5>
-          {% if days_to_brt > 355 %}
-            Недавно {{ form.initial.first_name }} справлял день рождения!
-          {% elif days_to_brt < 10 %}
-            Скоро у {{ form.initial.first_name }} день рождения... <br> Пора готовить поздравления!
-          {% endif %}
-        {% endif %}
-      </div>
-    </div>
-
-  {% elif "/edit/" in request.path %}
-    {% with object=form.initial %}
+    {% if "/preview/" in request.path %}
       <div class="card col-4">
-        <p class="card-header text-center">
-          <b>Редактирование записи № {{ object.id }}.</b>
-        </p>
-        <div class="card-body">
-          <form action="{% url 'birthday:edit' object.id %}" method="post">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            <table cellpadding="5" width="100%">
-              <tbody>
-                <!-- кнопка для возврата к исходным значениям -->
-                <tr>
-                  <td>
-                    <div class="d-grid gap-2 col-12 mx-auto">
-                      <input class="btn btn-outline-warning" type="reset" value="Вернуть изходные значения &#x1F504;">
-                    </div>
-                  </td>
-                </tr>
-                <!-- кнопка для сохранения изменений -->
-                <tr>
-                  <td>
-                    <div class="d-grid gap-2 col-12 mx-auto">
-                      <input class="btn btn-outline-success" type="submit" value="Изменить &#x2714;">
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </form>
-        </div>
-      </div>
-    {% endwith %}
-  {% endif %}
-
-  {% comment %} <hr>
-
-  <div class="card col-4 text-center">
-    <div class="card-body">
-      {% with data=form.instance %}
-        {% if form.is_valid %}
-          <b>Здравствуйте {{ data.first_name }} {{ data.last_name }}!<br><hr></b>
-          {% if birthday_countdown == 0 %}
+        <div class="card-body text-center">
+          {% if days_to_brt == 0 %}
             <h5>&#x1F382;&#x1F389; С днем рождения!!! &#x1F389;&#x1F382;</h5>
-          {% elif birthday_countdown > 0 %}
-            <h5>Дней до дня рождения: {{ birthday_countdown }}! &#x1F609;</h5>
-            {% if birthday_countdown > 355 %}
-              Недавно у Вас был день рождения... Поздравляем!
-            {% elif birthday_countdown < 10 %}
-              Скоро у Вас день рождения... <br> Готовы принимать подарки?
+          {% elif days_to_brt > 0 %}
+            <h5>Дней до дня рождения: {{ days_to_brt }}! &#x1F609;</h5>
+            {% if days_to_brt > 355 %}
+              Недавно {{ data.first_name }} справлял день рождения!
+            {% elif days_to_brt < 10 %}
+              Скоро у {{ data.first_name }} день рождения... <br> Пора готовить поздравления!
             {% endif %}
           {% endif %}
-        {% else %}
-          {% if "/edit/" in request.path %}
-            <b>Изменить запись № {{ data.id }}</b>
-          {% elif "/delete/" in request.path %}
-            <b>Удалить запись № {{ data.id }}</b>
-          {% else %}
-            <b>Заполните все необходимые поля формы.</b>
-          {% endif %}
-        {% endif %}
-      {% endwith %}
-    </div>
-  </div>
-  <br>
-
-  <div class="card col-4">
-    <p class="card-header text-center"><b>Калькулятор дней до дня рождения.</b></p>
-    {% if "/delete/" in request.path %}
-      <form action="{% url "birthday:delete" form.instance.id %}" method="post">
-    {% elif "/edit/" in request.path %}
-      <form action="{% url "birthday:edit" form.instance.id %}" method="post">
-    {% else %}
-      <form action="{% url "birthday:create" %}" method="post">
+        </div>
+      </div>
     {% endif %}
-      <div class="card-body">
-        {% csrf_token %}
-        {% if "/delete/" not in request.path %}
-          {% bootstrap_form form %}
-        {% else %}
-          {% with data=form.instance %}
-            <table cellpadding="5" width="100%" >
-              <thead align="center">
-                <tr>
-                  <td>
-                    <b>Имя и фамилия:</b>
-                  </td>
-                  <td>
-                    <b>Дата:</b>
-                  </td>
-                </tr>
-              </thead>
-              <tbody align="center">
-                <tr>
-                  <td>
-                    {{ data.first_name }} {{ data.last_name }}
-                  </td>
-                  <td>
-                    {{ data.birthday }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          {% endwith %}
-        {% endif %}
-        <hr>
-        <table cellpadding="5" width="100%">
-          {% if "/delete/" not in request.path %}
-            <tr>
-              <td>
-                <div class="d-grid gap-2 col-12 mx-auto">
-                  <input class="btn btn-outline-warning" type="reset" value="Очистить &#x274C;">
-                </div>
-              </td>
-            </tr>
-          {% endif %}
-          <tr>
-            <td>
-              <div class="d-grid gap-2 col-12 mx-auto">
-                {% if "/edit/" in request.path %}
-                  <input class="btn btn-outline-primary" type="submit" value="Изменить &#x2714;">
-                {% elif "/delete/" in request.path %}
-                  <input class="btn btn-outline-danger" type="submit" value="Удалить &#x1F5D1;">
-                {% else %}
-                  <input class="btn btn-outline-success" type="submit" value="Отправить &#x2714;">
-                {% endif %}
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </form>
-  </div> {% endcomment %}
 
-  <br>
-  {% if form.is_valid %}
-    <div class="card col-4">
-      <div class="card-body text-center">
-        {% with data=form.instance %}
-          <b>ID новой записи в БД: {{ data.id }}</b>
-        {% endwith %}
-      </div>
-    </div>
-  {% endif %}
-
+  {% endwith %}
 {% endblock content %}

@@ -1,4 +1,3 @@
-from pprint import pprint
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import BirthdayForm
@@ -17,8 +16,6 @@ def get_list(request):
         } for object in birthday_list
     }
     context = {'birthday_objects': birthday_objects}
-
-    print('-'*10, request.method, '-'*10, sep='\n')
 
     return render(
         request=request,
@@ -40,14 +37,18 @@ def crude_birthday(request, pk=None):
         object = get_object_or_404(klass=Birthday, pk=pk)
 
     form = BirthdayForm(data=request.POST or None, instance=object)
-    context = {'form': form}
+    context = {'form': form, 'inactive_attrs': None}
 
     if form.is_valid():
         form.save()
-        return redirect(to='birthday:list')
+        if '/preview/' in request.path:
+            return redirect(to='birthday:list')
+        elif '/create/' in request.path or '/edit/' in request.path:
+            id = form.instance.id
+            return redirect(to='birthday:preview', pk=id)
 
     elif f'/{pk}/preview/' in request.path or f'/{pk}/delete/' in request.path:
-        context['label_value'] = get_form_fields_attribute(form=form)
+        context['inactive_attrs'] = get_form_fields_attribute(form=form)
 
         if f'/{pk}/preview/' in request.path:
             context['days_to_brt'] = get_day_to_brt(form.initial['birthday'])
