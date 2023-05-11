@@ -1,5 +1,7 @@
 from django.db import models
 
+from .validators import real_age
+
 
 class Birthday(models.Model):
     first_name = models.CharField(
@@ -16,10 +18,24 @@ class Birthday(models.Model):
 
     birthday = models.DateField(
         verbose_name='Дата рождения',
+        validators=[real_age],
+    )
+
+    image = models.ImageField(
+        verbose_name='Фото',
+        upload_to='birthdays_images',
+        blank=True,
     )
 
     class Meta:
+        ordering = ['id']
         db_table = 'birthday_birthday'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['first_name', 'last_name', 'birthday'],
+                name='Unique person constraint',
+            )
+        ]
 
     def __str__(self):
         return self.first_name

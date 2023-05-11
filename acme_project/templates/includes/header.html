@@ -21,6 +21,12 @@
               Список дней рождения
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if view_name == 'birthday:page' %} active {% endif %}"
+              href="{% url 'birthday:page' 1 %}">
+              Постраничный просмотр
+            </a>
+          </li>
         </ul>
       {% endwith %}
     </div>

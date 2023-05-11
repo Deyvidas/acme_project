@@ -25,21 +25,9 @@
 
       <!-- Раздел формы -->
       <div class="card-body">
-        <form action="#" method="post">
+        <form action="#" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-
-          <!-- Раздел в котором определяется как будут рендерится поля -->
-          {% if inactive_attrs %}
-            {% for field_name, attr in inactive_attrs.items %}
-              <div class="mb-3">
-                <label class="form-label" for="{{ attr.input_id }}">{{ attr.label }}</label>
-                <input class="form-control" value="{{ attr.str_value }}" type="{{ attr.type }}" disabled name="{{ field_name }}" placeholder="{{ attr.label }}" id="{{ attr.input_id }}">
-                <div id="{{ field_name }}Help" class="form-text">{{ attr.help_text }}</div>
-              </div>
-            {% endfor %}
-          {% else %}
-            {% bootstrap_form form %}
-          {% endif %}
+          {% bootstrap_form form %}
 
           <!-- Раздел в котором определяется какие кнопки будут рендерится -->
           <a class="btn col-12 btn-outline-primary" href="{% url 'birthday:list' %}" role="button">Вернутся к списку &#x1F519;</a>

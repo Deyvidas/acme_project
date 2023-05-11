@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from django.conf.urls.static import static
 
-from acme_project.settings import DEBUG
+from .settings import DEBUG
 
 urlpatterns = [
     path('', include('pages.urls')),
@@ -10,4 +12,5 @@ urlpatterns = [
 ]
 
 if DEBUG:
-    urlpatterns.append(path('__debug__/', include('debug_toolbar.urls')))
+    urlpatterns += [path('__debug__/', include('debug_toolbar.urls'))]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
