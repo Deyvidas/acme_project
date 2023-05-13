@@ -4,7 +4,7 @@ from birthday.models import Birthday
 
 
 class HomePage(TemplateView):
-    """This view class used for work with static template without connection with DB."""
+    """This view class used for work with static templates without connection with DB."""
 
     template_name = 'pages/index.html'
 
