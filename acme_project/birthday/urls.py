@@ -6,10 +6,18 @@ from . import views
 app_name = 'birthday'
 
 urlpatterns = [
-    path('list/', views.get_list, name='list'),
-    path('create/', views.crude_birthday, name='create'),
-    path('<int:page_num>/page/', views.get_page_list, name='page'),
-    path('<int:pk>/delete/', views.crude_birthday, name='delete'),
-    path('<int:pk>/edit/', views.crude_birthday, name='edit'),
-    path('<int:pk>/preview/', views.crude_birthday, name='preview'),
+    path(route='list/', name='list',
+         view=views.BirthdayListView.as_view()),
+
+    path(route='create/', name='create',
+         view=views.BirthdayCreateView.as_view()),
+
+    path(route='<int:pk>/delete/', name='delete',
+         view=views.BirthdayDeleteView.as_view()),
+
+    path(route='<int:pk>/edit/', name='edit',
+         view=views.BirthdayUpdateView.as_view()),
+
+    path(route='<int:pk>/preview/', name='preview',
+         view=views.BirthdayDetailView.as_view()),
 ]
