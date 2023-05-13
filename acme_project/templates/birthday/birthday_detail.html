@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  Просмотр записи № {{ object.id }}.
+{% endblock title %}
+
+{% block content %}
+  <div class="card col-4">
+    <!-- Раздел заголовка формы -->
+    <p class="card-header text-center">
+      <b>Просмотр записи № {{ object.id }}.</b>
+    </p>
+    <!-- Раздел формы -->
+    <div class="card-body">
+      <form action="{% url 'birthday:list' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <a class="btn col-12 btn-outline-primary" href="{% url 'birthday:list' %}" role="button">Вернутся к списку &#x1F519;</a>
+      </form>
+    </div>
+  </div>
+  <p></p>
+  <!-- Окошко с количесвтом дней до дня рождения. -->
+  <div class="card col-4">
+    <div class="card-body text-center">
+      {% if days_to_brt == 0 %}
+        <h5>&#x1F382;&#x1F389; С днем рождения!!! &#x1F389;&#x1F382;</h5>
+      {% elif days_to_brt > 0 %}
+        <h5>Дней до дня рождения: {{ days_to_brt }}! &#x1F609;</h5>
+        {% if days_to_brt > 355 %}
+          Недавно {{ object.first_name }} справлял день рождения!
+        {% elif days_to_brt < 10 %}
+          Скоро у {{ object.first_name }} день рождения... <br> Пора готовить поздравления!
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}

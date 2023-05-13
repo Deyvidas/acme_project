@@ -1,0 +1,31 @@
+{% if paginator.num_pages > 1 %}
+  <div class="container col-12 d-flex justify-content-center text-center">
+    <nav class="container col-12 d-flex justify-content-center">
+      <ul class="pagination col-12 d-flex justify-content-center">
+        {% if page_obj.number != 1 %}
+          <li class="page-item col-1"><a class="page-link" href="{% url 'birthday:list' %}?page=1">Первая</a></li>
+        {% elif page_obj.number == 1 %}
+          <li class="page-item col-1 disabled"><a class="page-link">Первая</a></li>
+        {% endif %}
+        {% if page_obj.has_previous %}
+          <li class="page-item col-1"><a class="page-link" href="{% url 'birthday:list' %}?page={{ page_obj.previous_page_number }}">Назад</a></li>
+        {% else %}
+          <li class="page-item col-1 disabled"><a class="page-link">Назад</a></li>
+        {% endif %}
+        {% for page in paginator.page_range %}
+          <li class="page-item"><a class="page-link" href="{% url 'birthday:list' %}?page={{ page }}">{{ page }}</a></li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <li class="page-item col-1"><a class="page-link" href="{% url 'birthday:list' %}?page={{ page_obj.next_page_number }}">Вперед</a></li>
+        {% else %}
+          <li class="page-item col-1 disabled"><a class="page-link">Вперед</a></li>
+        {% endif %}
+        {% if page_obj.number != paginator.num_pages %}
+          <li class="page-item col-1"><a class="page-link" href="{% url 'birthday:list' %}?page={{ paginator.num_pages }}">Последняя</a></li>
+        {% elif page_obj.number == paginator.num_pages %}
+          <li class="page-item col-1 disabled"><a class="page-link">Последняя</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+{% endif %}

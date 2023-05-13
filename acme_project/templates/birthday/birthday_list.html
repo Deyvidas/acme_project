@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Список дней рождения
+{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <div class="col-12">
+      <table class="table table-striped text-center">
+        <thead>
+          <tr>
+            <th scope="col">Картинка</th>
+            <th scope="col">id</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Фамилия</th>
+            <th scope="col">День рождения</th>
+            <th scope="col">Дней до ДР</th>
+            <th scope="col">Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for object, additional in object_list.items %}
+            <tr class="align-middle">
+              <td class="col-1">
+                {% if object.image %}
+                  <img src="/{{ object.image }}" style="width: 52px">
+                {% else %}
+                  <a class="btn col-12 btn-outline-primary btn-sm" href="{% url "birthday:edit" object.id %}" role="button">Добавить картинку</a>
+                {% endif %}
+              </td>
+              <td class="text-center" scope="row">
+                {{ object.id }}
+              </td>
+              <td class="align-middle">
+                {{ object.first_name }}
+              </td>
+              <td class="align-middle">
+                {{ object.last_name }}
+              </td>
+              <td class="align-middle">
+                {{ object.birthday }}
+              </td>
+              <td class="align-middle">
+                {{ additional.days_to_brt }}
+              </td>
+              <td  class="col-3">
+                <div class="btn-group col-12 btn-group-sm" role="group">
+                  <a class="btn col-4 btn-outline-success btn-sm" href="{% url "birthday:preview" object.id %}" role="button">Просмотр</a>
+                  <a class="btn col-4 btn-outline-primary btn-sm" href="{% url "birthday:edit" object.id %}" role="button">Изменить</a>
+                  <a class="btn col-4 btn-outline-danger btn-sm" href="{% url "birthday:delete" object.id %}" role="button">Удалить</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% include "includes/paginator.html" %}
+{% endblock content %}

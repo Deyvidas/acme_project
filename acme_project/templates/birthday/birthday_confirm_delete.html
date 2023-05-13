@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  Удаление записи № {{ object.id }}.
+{% endblock title %}
+
+{% block content %}
+  <div class="card col-4">
+    <!-- Раздел заголовка формы -->
+    <p class="card-header text-center">
+      <b>Удаление записи № {{ object.id }}.</b>
+    </p>
+    <!-- Раздел формы -->
+    <div class="card-body">
+      <form action="#" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <a class="btn col-12 btn-outline-primary" href="{% url 'birthday:list' %}" role="button">Вернутся к списку &#x1F519;</a>
+        <p></p>
+        <input class="btn col-12 btn-outline-danger" type="submit" value="Удалить &#x1F5D1;">
+      </form>
+    </div>
+  </div>
+{% endblock content %}

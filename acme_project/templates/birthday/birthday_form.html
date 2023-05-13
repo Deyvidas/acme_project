@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  Расчет дней до дня рождения
+{% endblock title %}
+
+{% block content %}
+
+  {% with data=form.instance %}
+
+    <!-- Раздел в котором определяется каким будет заголовок формы -->
+    <div class="card col-4">
+      <p class="card-header text-center">
+        {% if "/create/" in request.path %}
+          <b>Создание новой записи.</b>
+        {% elif "/edit/" in request.path %}
+          <b>Редактирование записи № {{ data.id }}.</b>
+        {% endif %}
+      </p>
+
+      <!-- Раздел формы -->
+      <div class="card-body">
+        <form action="#" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+
+          <!-- Раздел в котором определяется какие кнопки будут рендерится -->
+          <a class="btn col-12 btn-outline-primary" href="{% url 'birthday:list' %}" role="button">Вернутся к списку &#x1F519;</a>
+          <p></p>
+          {% if "/create/" in request.path %}
+            <input class="btn col-12 btn-outline-warning" type="reset" value="Очистить &#x274C;">
+            <p></p>
+            <input class="btn col-12 btn-outline-success" type="submit" value="Сохранить &#x2714;">
+          {% elif "/edit/" in request.path %}
+            <input class="btn col-12 btn-outline-warning" type="reset" value="Вернуть изходные значения &#x1F504;">
+            <p></p>
+            <input class="btn col-12 btn-outline-success" type="submit" value="Изменить &#x2714;">
+          {% endif %}
+
+        </form>
+      </div>
+    </div>
+  {% endwith %}
+{% endblock content %}
